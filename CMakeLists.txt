@@ -11,6 +11,7 @@ add_executable(OpenGL_Lighting
 	"src/Mesh.cpp"
 	"src/Shader.cpp"
 	"src/TextureManager.cpp"
+	"src/Camera.cpp"
 	"Main.cpp"
 )
 

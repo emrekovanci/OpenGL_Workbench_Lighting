@@ -13,7 +13,7 @@
 
 #include "Vertex.hpp"
 #include "Shader.hpp"
-#include "FreeLookCamera.hpp"
+#include "Camera.hpp"
 #include "TextureManager.hpp"
 #include "PointLight.hpp"
 #include "Mesh.hpp"
@@ -29,7 +29,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera;
 float lastX = SCR_WIDTH * 0.5f;
 float lastY = SCR_HEIGHT * 0.5f;
 bool firstMouse = true;
@@ -387,10 +387,10 @@ void processInput(GLFWwindow* window)
 {
     glfwSetWindowShouldClose(window, glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS);
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { camera.ProcessKeyboard(FORWARD, deltaTime); }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { camera.ProcessKeyboard(BACKWARD, deltaTime); }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { camera.ProcessKeyboard(LEFT, deltaTime); }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(RIGHT, deltaTime); }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { camera.ProcessKeyboard(CameraMovement::Forward, deltaTime); }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { camera.ProcessKeyboard(CameraMovement::Backward, deltaTime); }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { camera.ProcessKeyboard(CameraMovement::Left, deltaTime); }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(CameraMovement::Right, deltaTime); }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

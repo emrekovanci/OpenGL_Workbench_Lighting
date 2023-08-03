@@ -22,7 +22,7 @@ void Mesh::render(const Shader& shader) const
 
     for(unsigned int i = 0; i < _textures.size(); i++)
     {
-         // active proper texture unit before binding
+        // active proper texture unit before binding
         glActiveTexture(GL_TEXTURE0 + i);
 
         // retrieve texture number (the N in diffuse_textureN)

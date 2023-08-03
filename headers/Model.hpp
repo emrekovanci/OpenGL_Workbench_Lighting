@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h> 
+#include <glad/glad.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,12 +18,12 @@
 #include <vector>
 #include <string>
 
-class Model 
+class Model
 {
 public:
     Model(const std::string& filePath);
     void render(const Shader& shader);
-    
+
 private:
     std::vector<Texture> textures_loaded;
     std::vector<Mesh> meshes;

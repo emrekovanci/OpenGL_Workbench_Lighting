@@ -33,7 +33,7 @@ unsigned int TextureFromFile(const char *path, const std::string &directory)
 	}
 
     stbi_image_free(data);
-    
+
 	return textureID;
 }
 
@@ -55,9 +55,9 @@ void Model::loadModel(const std::string& filePath)
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(
 		filePath,
-		aiProcess_Triangulate | 
-        aiProcess_GenSmoothNormals | 
-        aiProcess_FlipUVs | 
+		aiProcess_Triangulate |
+        aiProcess_GenSmoothNormals |
+        aiProcess_FlipUVs |
         aiProcess_JoinIdenticalVertices |
         aiProcess_CalcTangentSpace
 	);
@@ -80,7 +80,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     // process each mesh located at the current node
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
-        // the node object only contains indices to index the actual objects in the scene. 
+        // the node object only contains indices to index the actual objects in the scene.
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(processMesh(mesh, scene));
@@ -100,7 +100,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 	std::vector<unsigned int> indices;
 	indices.reserve(mesh->mNumFaces * 3);
-	
+
 	std::vector<Texture> textures;
 
 	// read vertices
@@ -117,8 +117,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             vertex.Normal = glm::vec3(meshNormal.x, meshNormal.y, meshNormal.z);
         }
 
-        // a vertex can contain up to 8 different texture coordinates. 
-        // We thus make the assumption that we won't 
+        // a vertex can contain up to 8 different texture coordinates.
+        // We thus make the assumption that we won't
         // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
         if (mesh->mTextureCoords[0])
         {
@@ -152,15 +152,15 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
     	for (unsigned int j = 0; j < face.mNumIndices; j++)
     	{
-    		indices.push_back(face.mIndices[j]);        
+    		indices.push_back(face.mIndices[j]);
     	}
     }
-    
+
     // process materials
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];    
-    
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
     // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
-    // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
+    // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
     // Same applies to other texture as the following list summarizes:
     // diffuse: texture_diffuseN
     // specular: texture_specularN
@@ -169,15 +169,15 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // 1. diffuse maps
     std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-    
+
     // 2. specular maps
     std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    
+
     // 3. normal maps
     std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-    
+
     // 4. height maps
     std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
@@ -193,7 +193,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
     {
         aiString str;
         material->GetTexture(type, i, &str);
-        
+
         // check if texture was loaded before
         bool skip = false;
         for (unsigned int j = 0; j < textures_loaded.size(); j++)
@@ -207,7 +207,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
         }
 
         if (!skip)
-        { 
+        {
             Texture texture;
             texture.id = TextureFromFile(str.C_Str(), _directory);
             texture.type = typeName;

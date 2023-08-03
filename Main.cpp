@@ -84,12 +84,12 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    Shader litShader("shaders/vert_lit.glsl", "shaders/frag_lit.glsl");
-    Shader unlitShader("shaders/vert_unlit.glsl", "shaders/frag_unlit.glsl");
+    Shader litShader("resources/shaders/vert_lit.glsl", "resources/shaders/frag_lit.glsl");
+    Shader unlitShader("resources/shaders/vert_unlit.glsl", "resources/shaders/frag_unlit.glsl");
     TextureManager textureManager;
-    unsigned int diffuseTexture = textureManager.load("textures/container2.png");
-    unsigned int specularTexture = textureManager.load("textures/container2_specular.png");
-    unsigned int emissionTexture = textureManager.load("textures/matrix.jpg");
+    unsigned int diffuseTexture = textureManager.load("resources/textures/container2.png");
+    unsigned int specularTexture = textureManager.load("resources/textures/container2_specular.png");
+    unsigned int emissionTexture = textureManager.load("resources/textures/matrix.jpg");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -281,7 +281,7 @@ int main()
             litShader.setFloat(prefix + ".linear", pointLights[i].linear);
             litShader.setFloat(prefix + ".quadratic", pointLights[i].quadratic);
         }
-        
+
         // spotLight
         // ---------
         litShader.setVec3("spotLight.position", camera.Position);
@@ -293,7 +293,7 @@ int main()
         litShader.setFloat("spotLight.linear", 0.09f);
         litShader.setFloat("spotLight.quadratic", 0.032f);
         litShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
-        litShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));  
+        litShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
         // render cubes
         // ------------
@@ -347,11 +347,11 @@ int main()
                 if (ImGui::CollapsingHeader(groupTitle.c_str()))
                 {
                     ImGui::SliderFloat3("Position", glm::value_ptr(pointLights[i].position), -50.0f, 50.0f);
-                    ImGui::SliderFloat3("Color", glm::value_ptr(pointLights[i].color), 0.0f, 1.0f); 
+                    ImGui::SliderFloat3("Color", glm::value_ptr(pointLights[i].color), 0.0f, 1.0f);
                     ImGui::SliderFloat("Constant", &pointLights[i].constant, 0.0f, 1.0f);
                     ImGui::SliderFloat("Linear", &pointLights[i].linear, 0.0f, 1.0f);
                     ImGui::SliderFloat("Quadratic", &pointLights[i].quadratic, 0.0f, 1.0f);
-                } 
+                }
                 ImGui::PopID();
             }
 

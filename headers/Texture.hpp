@@ -2,7 +2,7 @@
 
 #include <string>
 
-struct Texture 
+struct Texture
 {
     unsigned int id;
     std::string type;

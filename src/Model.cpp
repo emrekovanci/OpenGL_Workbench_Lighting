@@ -44,7 +44,7 @@ Model::Model(const std::string& filePath)
 
 void Model::render(const Shader& shader)
 {
-    for (const Mesh& mesh : meshes)
+    for (const Mesh& mesh : _meshes)
     {
         mesh.render(shader);
     }
@@ -83,7 +83,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
         // the node object only contains indices to index the actual objects in the scene.
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        _meshes.push_back(processMesh(mesh, scene));
     }
 
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
@@ -196,11 +196,11 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
 
         // check if texture was loaded before
         bool skip = false;
-        for (unsigned int j = 0; j < textures_loaded.size(); j++)
+        for (unsigned int j = 0; j < _loadedTextures.size(); j++)
         {
-            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+            if (std::strcmp(_loadedTextures[j].path.data(), str.C_Str()) == 0)
             {
-                textures.push_back(textures_loaded[j]);
+                textures.push_back(_loadedTextures[j]);
                 skip = true;
                 break;
             }
@@ -213,7 +213,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
-            textures_loaded.push_back(texture);
+            _loadedTextures.push_back(texture);
         }
     }
 

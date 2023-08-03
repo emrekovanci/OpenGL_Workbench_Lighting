@@ -25,8 +25,8 @@ public:
     void render(const Shader& shader);
 
 private:
-    std::vector<Texture> textures_loaded;
-    std::vector<Mesh> meshes;
+    std::vector<Texture> _loadedTextures;
+    std::vector<Mesh> _meshes;
     std::string _directory;
 
 private:

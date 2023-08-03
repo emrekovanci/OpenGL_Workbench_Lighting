@@ -26,11 +26,11 @@ struct DirectionalLight
 struct PointLight
 {
     vec3 position;
-    
+
     float constant;
     float linear;
     float quadratic;
-    
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -46,7 +46,7 @@ struct SpotLight
     float constant;
     float linear;
     float quadratic;
-    
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -86,7 +86,7 @@ void main()
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection)
 {
     vec3 lightDir = normalize(-light.direction);
-    
+
     // ambient
     vec3 ambient = light.ambient * texture(material.diffuse, TexCoord).rgb;
 
@@ -142,7 +142,7 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
     vec3 lightDir = normalize(light.position - fragPos);
 
     // spotlight soft edges
-    float theta = dot(lightDir, normalize(-light.direction)); 
+    float theta = dot(lightDir, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
 

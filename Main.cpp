@@ -314,6 +314,7 @@ int main()
 
             glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         }
+        glBindVertexArray(0);
 
         unlitShader.use();
         unlitShader.setMat4("projection", projection);
@@ -330,6 +331,7 @@ int main()
 
             glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         }
+        glBindVertexArray(0);
 
         // imgui
         // -----

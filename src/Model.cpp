@@ -1,4 +1,4 @@
-#include "headers/Model.hpp"
+#include "Model.hpp"
 
 #include <filesystem>
 

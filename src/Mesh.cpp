@@ -1,4 +1,4 @@
-#include "headers/Mesh.hpp"
+#include "Mesh.hpp"
 
 #include <string>
 

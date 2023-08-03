@@ -1,4 +1,4 @@
-#include "headers/TextureManager.hpp"
+#include "TextureManager.hpp"
 
 #include <iostream>
 

@@ -9,6 +9,7 @@ class Shader
 {
 public:
     Shader(const char* vertexPath, const char* fragmentPath);
+    ~Shader();
 
     void use() const;
 
@@ -32,5 +33,5 @@ public:
     void setMat4(const std::string& name, const glm::mat4& mat) const;
 
 private:
-    unsigned int _id;
+    unsigned int _id { 0 };
 };

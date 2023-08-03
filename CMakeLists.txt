@@ -4,14 +4,13 @@ project(OpenGL_Lighting)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(include)
+
 add_executable(OpenGL_Lighting
-	"headers/Vertex.hpp"
-	"headers/PointLight.hpp"
-	"headers/FreeLookCamera.hpp"
-	"Model.cpp"
-	"Mesh.cpp"
-	"Shader.cpp"
-	"TextureManager.cpp"
+	"src/Model.cpp"
+	"src/Mesh.cpp"
+	"src/Shader.cpp"
+	"src/TextureManager.cpp"
 	"Main.cpp"
 )
 

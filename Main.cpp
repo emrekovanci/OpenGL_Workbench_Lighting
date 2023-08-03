@@ -11,13 +11,13 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "headers/Vertex.hpp"
-#include "headers/Shader.hpp"
-#include "headers/FreeLookCamera.hpp"
-#include "headers/TextureManager.hpp"
-#include "headers/PointLight.hpp"
-#include "headers/Mesh.hpp"
-#include "headers/Model.hpp"
+#include "Vertex.hpp"
+#include "Shader.hpp"
+#include "FreeLookCamera.hpp"
+#include "TextureManager.hpp"
+#include "PointLight.hpp"
+#include "Mesh.hpp"
+#include "Model.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);

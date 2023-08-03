@@ -1,8 +1,8 @@
-#include "headers/Shader.hpp"
+#include "Shader.hpp"
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
+#include <iterator>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -10,72 +10,63 @@ void checkCompileErrors(GLuint shader, std::string type)
 {
     GLint success;
     GLchar infoLog[1024];
-    if (type != "PROGRAM")
-    {
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-        if (!success)
-        {
-            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
-        }
-    }
-    else
+
+    if (type == "PROGRAM")
     {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
         if (!success)
         {
-            glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+            glGetProgramInfoLog(shader, 1024, nullptr, infoLog);
+            std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << std::endl;
         }
+
+        return;
+    }
+
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(shader, 1024, nullptr, infoLog);
+        std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << std::endl;
     }
 }
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
-    // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
-    std::ifstream vShaderFile;
-    std::ifstream fShaderFile;
 
-    // ensure ifstream objects can throw exceptions:
+    std::ifstream vShaderFile;
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+    std::ifstream fShaderFile;
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try
     {
-        // open files
         vShaderFile.open(vertexPath);
         fShaderFile.open(fragmentPath);
-        std::stringstream vShaderStream, fShaderStream;
 
-        // read file's buffer contents into streams
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
+        vertexCode = { std::istreambuf_iterator<char> { vShaderFile }, std::istreambuf_iterator<char> {} };
+        fragmentCode = { std::istreambuf_iterator<char> { fShaderFile }, std::istreambuf_iterator<char> {} };
 
-        // close file handlers
         vShaderFile.close();
         fShaderFile.close();
-
-        // convert stream into string
-        vertexCode = vShaderStream.str();
-        fragmentCode = fShaderStream.str();
     }
     catch (std::ifstream::failure& e)
     {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
     }
 
-    const char* vShaderCode = vertexCode.c_str();
-    const char* fShaderCode = fragmentCode.c_str();
-
     // vertex shader
+    const char* vShaderCode = vertexCode.c_str();
     unsigned int vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, nullptr);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
 
     // fragment Shader
+    const char* fShaderCode = fragmentCode.c_str();
     unsigned int fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, nullptr);
     glCompileShader(fragment);
@@ -88,9 +79,14 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glLinkProgram(_id);
     checkCompileErrors(_id, "PROGRAM");
 
-    // delete the shaders as they're linked into our program now and no longer necessary
+    // they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
+}
+
+Shader::~Shader()
+{
+    glDeleteProgram(_id);
 }
 
 void Shader::use() const
@@ -105,7 +101,7 @@ unsigned int Shader::getProgramId() const
 
 void Shader::setBool(const std::string& name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(_id, name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(_id, name.c_str()), static_cast<int>(value));
 }
 
 void Shader::setInt(const std::string& name, int value) const

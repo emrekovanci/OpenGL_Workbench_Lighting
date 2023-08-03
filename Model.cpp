@@ -6,107 +6,107 @@ unsigned int TextureFromFile(const char *path, const std::string &directory)
 {
     std::filesystem::path filename = std::filesystem::path(directory) / std::filesystem::path(path);
 
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
 
-	int width, height, nrComponents;
-	unsigned char *data = stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
-	if (data)
-	{
-		GLenum format = 0;
-		if (nrComponents == 1) { format = GL_RED; }
-		else if (nrComponents == 3) { format = GL_RGB; }
-		else if (nrComponents == 4) { format = GL_RGBA; }
+    int width, height, nrComponents;
+    unsigned char *data = stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum format = 0;
+        if (nrComponents == 1) { format = GL_RED; }
+        else if (nrComponents == 3) { format = GL_RGB; }
+        else if (nrComponents == 4) { format = GL_RGBA; }
 
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		std::cout << "Texture failed to load at path: " << path << std::endl;
-	}
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
+    }
 
     stbi_image_free(data);
 
-	return textureID;
+    return textureID;
 }
 
 Model::Model(const std::string& filePath)
 {
-	loadModel(filePath);
+    loadModel(filePath);
 }
 
 void Model::render(const Shader& shader)
 {
-	for (const Mesh& mesh : meshes)
-	{
-		mesh.render(shader);
-	}
+    for (const Mesh& mesh : meshes)
+    {
+        mesh.render(shader);
+    }
 }
 
 void Model::loadModel(const std::string& filePath)
 {
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(
-		filePath,
-		aiProcess_Triangulate |
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(
+        filePath,
+        aiProcess_Triangulate |
         aiProcess_GenSmoothNormals |
         aiProcess_FlipUVs |
         aiProcess_JoinIdenticalVertices |
         aiProcess_CalcTangentSpace
-	);
+    );
 
-	if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-	{
-		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-		return;
-	}
+    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    {
+        std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+        return;
+    }
 
     // retrieve the directory path of the filepath
-	_directory = std::filesystem::path(filePath).parent_path().string();
+    _directory = std::filesystem::path(filePath).parent_path().string();
 
     // process ASSIMP's root node recursively
-	processNode(scene->mRootNode, scene);
+    processNode(scene->mRootNode, scene);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
     // process each mesh located at the current node
-	for(unsigned int i = 0; i < node->mNumMeshes; i++)
-	{
+    for(unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
         // the node object only contains indices to index the actual objects in the scene.
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
-		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(processMesh(mesh, scene));
-	}
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        meshes.push_back(processMesh(mesh, scene));
+    }
 
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
-	for(unsigned int i = 0; i < node->mNumChildren; i++)
-	{
-		processNode(node->mChildren[i], scene);
-	}
+    for(unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+        processNode(node->mChildren[i], scene);
+    }
 }
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-	std::vector<Vertex> vertices;
-	vertices.reserve(mesh->mNumVertices);
+    std::vector<Vertex> vertices;
+    vertices.reserve(mesh->mNumVertices);
 
-	std::vector<unsigned int> indices;
-	indices.reserve(mesh->mNumFaces * 3);
+    std::vector<unsigned int> indices;
+    indices.reserve(mesh->mNumFaces * 3);
 
-	std::vector<Texture> textures;
+    std::vector<Texture> textures;
 
-	// read vertices
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-	{
-		Vertex vertex;
+    // read vertices
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    {
+        Vertex vertex;
 
         const auto& meshVertex = mesh->mVertices[i];
         vertex.Position = glm::vec3(meshVertex.x, meshVertex.y, meshVertex.z);
@@ -139,7 +139,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         }
         else
         {
-           	vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+            vertex.TexCoords = glm::vec2(0.0f, 0.0f);
         }
 
         vertices.push_back(vertex);
@@ -148,12 +148,12 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // read faces
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
-    	const aiFace& face = mesh->mFaces[i];
+        const aiFace& face = mesh->mFaces[i];
 
-    	for (unsigned int j = 0; j < face.mNumIndices; j++)
-    	{
-    		indices.push_back(face.mIndices[j]);
-    	}
+        for (unsigned int j = 0; j < face.mNumIndices; j++)
+        {
+            indices.push_back(face.mIndices[j]);
+        }
     }
 
     // process materials
@@ -187,7 +187,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string typeName)
 {
-	std::vector<Texture> textures;
+    std::vector<Texture> textures;
 
     for (unsigned int i = 0; i < material->GetTextureCount(type); i++)
     {

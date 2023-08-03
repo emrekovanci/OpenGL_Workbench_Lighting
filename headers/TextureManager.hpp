@@ -8,8 +8,8 @@ class TextureManager
 private:
 
 public:
-	TextureManager() = default;
+    TextureManager() = default;
 
-	unsigned int load(const std::string& fileName);
-	void activate(unsigned int level, unsigned int id) const;
+    unsigned int load(const std::string& fileName);
+    void activate(unsigned int level, unsigned int id) const;
 };

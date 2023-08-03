@@ -5,11 +5,11 @@
 #include <glad/glad.h>
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures) :
-	_vertices{ vertices },
-	_indices{ indices },
-	_textures{ textures }
+    _vertices{ vertices },
+    _indices{ indices },
+    _textures{ textures }
 {
-	initialize();
+    initialize();
 }
 
 void Mesh::render(const Shader& shader) const
@@ -33,7 +33,7 @@ void Mesh::render(const Shader& shader) const
         else if (name == "texture_normal") { number = std::to_string(normalNr++); }
         else if (name == "texture_height") { number = std::to_string(heightNr++); }
 
-		// now set the sampler to the correct texture unit
+        // now set the sampler to the correct texture unit
         glUniform1i(glGetUniformLocation(shader.getProgramId(), (name + number).c_str()), i);
         glBindTexture(GL_TEXTURE_2D, _textures[i].id);
     }
@@ -49,7 +49,7 @@ void Mesh::render(const Shader& shader) const
 
 void Mesh::initialize()
 {
-	glGenVertexArrays(1, &_vao);
+    glGenVertexArrays(1, &_vao);
     glGenBuffers(1, &_vbo);
     glGenBuffers(1, &_ebo);
 
@@ -82,12 +82,12 @@ void Mesh::initialize()
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 
     // ids
-	glEnableVertexAttribArray(5);
-	glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, m_BoneIDs));
+    glEnableVertexAttribArray(5);
+    glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, m_BoneIDs));
 
-	// weights
-	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
+    // weights
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
 
     glBindVertexArray(0);
 }

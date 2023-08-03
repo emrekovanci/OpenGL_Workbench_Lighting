@@ -43,6 +43,6 @@ unsigned int TextureManager::load(const std::string& fileName)
 
 void TextureManager::activate(unsigned int level, unsigned int id) const
 {
-	glActiveTexture(level);
-	glBindTexture(GL_TEXTURE_2D, id);
+    glActiveTexture(level);
+    glBindTexture(GL_TEXTURE_2D, id);
 }

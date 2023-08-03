@@ -85,6 +85,12 @@ int main()
     // build and compile our shader program
     // ------------------------------------
     Shader litShader("resources/shaders/vert_lit.glsl", "resources/shaders/frag_lit.glsl");
+    litShader.use();
+    litShader.setInt("material.diffuse", 0);
+    litShader.setInt("material.specular", 1);
+    litShader.setInt("material.emission", 2);
+    litShader.setFloat("material.shininess", 64.0f);
+
     Shader unlitShader("resources/shaders/vert_unlit.glsl", "resources/shaders/frag_unlit.glsl");
     TextureManager textureManager;
     unsigned int diffuseTexture = textureManager.load("resources/textures/container2.png");
@@ -251,13 +257,6 @@ int main()
             litShader.setMat4("model", trsBackpackModel);
             backpackModel.render(litShader);
         }*/
-
-        // material props
-        // --------------
-        litShader.setInt("material.diffuse", 0);
-        litShader.setInt("material.specular", 1);
-        litShader.setInt("material.emission", 2);
-        litShader.setFloat("material.shininess", 64.0f);
 
         // directional light
         // -----------------

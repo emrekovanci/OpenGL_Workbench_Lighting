@@ -304,9 +304,9 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    unsigned int lightCubeVAO;
-    glGenVertexArrays(1, &lightCubeVAO);
-        glBindVertexArray(lightCubeVAO);
+    unsigned int lightCubeVao;
+    glGenVertexArrays(1, &lightCubeVao);
+        glBindVertexArray(lightCubeVao);
         glBindBuffer(GL_ARRAY_BUFFER, cubeVbo);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
@@ -339,7 +339,7 @@ int main()
 
         // render scene
         renderCubes(litShader, cubeVao, cubePositions, projection, view, currentFrameTime);
-        renderPointLights(unlitShader, lightCubeVAO, pointLights, projection, view);
+        renderPointLights(unlitShader, lightCubeVao, pointLights, projection, view);
         renderImGui(pointLights);
 
         glfwSwapBuffers(window);
@@ -347,7 +347,7 @@ int main()
     }
 
     glDeleteVertexArrays(1, &cubeVao);
-    glDeleteVertexArrays(1, &lightCubeVAO);
+    glDeleteVertexArrays(1, &lightCubeVao);
     glDeleteBuffers(1, &cubeVbo);
 
     glfwTerminate();

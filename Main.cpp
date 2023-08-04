@@ -131,6 +131,15 @@ void renderPointLights(Shader& shader, unsigned int vao, const std::vector<Point
     glBindVertexArray(0);
 }
 
+void initImGui(GLFWwindow* window)
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+    ImGui::StyleColorsDark();
+}
+
 void renderImGui(std::vector<PointLight>& pointLights)
 {
     {
@@ -209,7 +218,7 @@ int main()
     textureManager.load("resources/textures/container2_specular.png", "specular");
     textureManager.load("resources/textures/matrix.jpg", "emission");
 
-    std::vector<Vertex> vertices
+    std::vector<Vertex> cubeVertices
     {
         // back face
         { { -0.5f, -0.5f, -0.5f }, { 0.0f,  0.0f, -1.0f }, { 0.0f, 0.0f } },
@@ -280,41 +289,35 @@ int main()
         { { 0.0f, 0.0f, -3.0f }, { 0.3f, 0.1f, 0.1f } }
     };
 
-    unsigned int VBO, cubeVAO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(cubeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+    unsigned int cubeVbo, cubeVao;
+    glGenVertexArrays(1, &cubeVao);
+    glGenBuffers(1, &cubeVbo);
+        glBindVertexArray(cubeVao);
+        glBindBuffer(GL_ARRAY_BUFFER, cubeVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * cubeVertices.size(), cubeVertices.data(), GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     unsigned int lightCubeVAO;
     glGenVertexArrays(1, &lightCubeVAO);
-    glBindVertexArray(lightCubeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+        glBindVertexArray(lightCubeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, cubeVbo);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    // Setup Dear ImGui
-    // ----------------
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init();
-    ImGui::StyleColorsDark();
-
-    //Model backpackModel("models/backpack.obj");
+    //Model backpackModel("resources/models/backpack.obj");
 
     glEnable(GL_DEPTH_TEST);
+
+    initImGui(window);
     while (!glfwWindowShouldClose(window))
     {
         const float currentFrameTime = static_cast<float>(glfwGetTime());
@@ -335,7 +338,7 @@ int main()
         updateSpotlight(litShader);
 
         // render scene
-        renderCubes(litShader, cubeVAO, cubePositions, projection, view, currentFrameTime);
+        renderCubes(litShader, cubeVao, cubePositions, projection, view, currentFrameTime);
         renderPointLights(unlitShader, lightCubeVAO, pointLights, projection, view);
         renderImGui(pointLights);
 
@@ -343,9 +346,9 @@ int main()
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &cubeVAO);
+    glDeleteVertexArrays(1, &cubeVao);
     glDeleteVertexArrays(1, &lightCubeVAO);
-    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &cubeVbo);
 
     glfwTerminate();
     return 0;

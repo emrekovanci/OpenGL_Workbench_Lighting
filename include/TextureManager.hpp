@@ -5,11 +5,12 @@
 
 class TextureManager
 {
-private:
-
 public:
-    TextureManager() = default;
+    void load(const std::string& fileName, const std::string& identifier);
+    unsigned int get(const std::string& identifier);
 
-    unsigned int load(const std::string& fileName);
     void activate(unsigned int level, unsigned int id) const;
+
+private:
+    std::map<std::string, unsigned int> _textures;
 };

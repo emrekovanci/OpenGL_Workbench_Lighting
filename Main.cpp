@@ -119,12 +119,12 @@ void renderPointLights(Shader& shader, unsigned int vao, const std::vector<Point
     glBindVertexArray(vao);
     for (std::size_t i = 0; i < lights.size(); ++i)
     {
-        glm::mat4 trsUnlitCube =
+        glm::mat4 trs =
             glm::translate(glm::mat4(1.0f), lights[i].position) *
             glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
             glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 
-        shader.setMat4("model", trsUnlitCube);
+        shader.setMat4("model", trs);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
